@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scanned QR Data</title>
+  <style>
+    body {
+      background-image: radial-gradient(circle, rgb(243, 243, 251), rgb(19, 19, 17));
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      width: 90%;
+    }
+    th, td {
+      padding: 12px 20px;
+      border: 1px solid #ccc;
+    }
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+      width: 200px;
+    }
+    button {
+      margin: 10px 5px;
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .delete-btn {
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .delete-btn:hover {
+      background-color: darkred;
+    }
+    nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(255, 246, 246, 0);
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .logo {
+      height: 50px;
+      border-radius: 100px;
+    }
+    .toggle-btn {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+    }
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+    .nav-links a:hover {
+      background-color: #0066cc;
+    }
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: #0040804d;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 10px 0;
+      }
+      .nav-links.active {
+        display: flex;
+      }
+      .toggle-btn {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<body>
+<nav>
+<img class="logo-main scale-with-grid " src="https://fedpolel.edu.ng/wp-content/uploads/2021/05/logo-1.png" data-retina=""alt="Federal Polytechnic Ile-Oluji Logo"  class="logo" data-height="67"  data-no-retina="">
+  <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="Home.html">HOME</a></li>
+    <li><a href="Lecturerlogin.html">LECTURER</a></li>
+    <li><a href="Studentlogin.html">STUDENT</a></li>
+    <li><a href="index3.html">RECORD</a></li>
+  </ul>
+</nav>
+<h1>Attendance <br>Scanned QR Code Data</h1>
+<div id="printSection">
+  <table id="qrTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Scan Data <br> course,Title,Date,Time,Lecturer,Season,ID</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Matric Number</th>
+        <th>Timestamp</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+<button onclick="clearScans()">Clear All</button>
+<button onclick="window.print()">Print</button>
+<button onclick="downloadPDF()">Download as PDF</button>
+<button onclick="scanAgain()">Scan Again</button>
+<script>
+  const tableBody = document.querySelector("#qrTable tbody");
+  let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
+
+  function renderTable() {
+    tableBody.innerHTML = "";
+    if (scans.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7">No scans yet.</td></tr>`;
+    } else {
+      scans.forEach((scan, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${scan.data}</strong></td>
+          <td>${scan.name}</td>
+          <td>${scan.surname}</td>
+          <td>${scan.matric}</td>
+          <td>${formatDate(scan.time)}</td>
+          <td><button class="delete-btn" onclick="deleteScan(${index})">Delete</button></td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+  }
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+    return date.toLocaleString(undefined, options);
+  }
+
+  function clearScans() {
+    if (confirm("Are you sure you want to clear all scans?")) {
+      localStorage.removeItem("qrScans");
+      scans = [];
+      renderTable();
+    }
+  }
+
+  function deleteScan(index) {
+    scans.splice(index, 1);
+    localStorage.setItem("qrScans", JSON.stringify(scans));
+    renderTable();
+  }
+
+  function downloadPDF() {
+    const element = document.body;
+    const opt = {
+      margin: 0.5,
+      filename: 'scanned_data.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+  }
+
+  function scanAgain() {
+    window.location.href = "Lecturer.html";
+  }
+
+  function toggleMenu() {
+    document.getElementById("navLinks").classList.toggle("active");
+  }
+
+  renderTable();
+</script>
+</body>
+</html>

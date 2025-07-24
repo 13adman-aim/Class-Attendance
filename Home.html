@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Class Attendance</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .header2 {
+      width: 100%;
+      background-color: #e4dddd;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgb(128, 128, 128);
+      color: white;
+      padding: 10px 20px;
+      position: relative;
+    }
+
+    .logo {
+      height: 50px;
+      border-radius: 100px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: #0066cc;
+    }
+
+    .toggle-btn {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+    }
+
+    .container2 {
+    width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      background-color: gray;
+      gap: 20px;
+    }
+
+    h1 {
+      font-family: Georgia;
+      font-size: 6vw;
+      color: transparent;
+      background-image: url(img/apl.JPG);
+      background-size: cover;
+      background-position: center;
+      -webkit-background-clip: text;
+      background-clip: text;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.5rem;
+      font-style: italic;
+      font-family: 'Lucida Sans', sans-serif;
+      color: rgba(6, 6, 6, 0.982);
+    }
+
+    .box1 {
+      border: 5px solid rgb(242, 241, 237);
+      font-size: 1.5rem;
+      border-radius: 10px;
+      background-color: rgb(252, 253, 254);
+      text-align: center;
+      padding: 10px;
+      box-shadow: 10px 10px 10px rgba(0,0,0,0.2);
+      animation: abc 5s forwards;
+      margin: 20px;
+    }
+
+    @keyframes abc {
+      0% {
+        width: 0%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 40px 20px;
+      background-color: black;
+      gap: 20px;
+    }
+
+    .left-panel, .right-panel {
+      flex: 1 1 300px;
+      min-width: 280px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .grid img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .right-panel h1 {
+      font-size: 2.5rem;
+      color: #f9f6f6;
+      margin-bottom: 20px;
+    }
+
+    .right-panel p {
+      font-size: 1rem;
+      color: #f8f4f4;
+      line-height: 1.6;
+    }
+
+    .buttons button {
+      font-size: 1rem;
+      padding: 10px 20px;
+      margin-top: 10px;
+      margin-right: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .explore {
+      background-color: #6e8e2e;
+      color: white;
+    }
+
+    .preview {
+      background-color: transparent;
+      border: 2px solid #6e8e2e;
+      color: #6e8e2e;
+    }
+
+    .card-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: rgba(97, 80, 80, 0.303);
+      border-radius: 10px;
+      padding: 15px;
+      width: 250px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #fcb045;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: #0040804d;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 10px 0;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+
+      .right-panel h1 {
+        font-size: 2rem;
+        text-align: center;
+      }
+
+      .right-panel p {
+        text-align: center;
+      }
+
+      .buttons {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header2">
+    <nav>
+    <img class="logo-main scale-with-grid " src="https://fedpolel.edu.ng/wp-content/uploads/2021/05/logo-1.png" data-retina=""alt="Federal Polytechnic Ile-Oluji Logo"  class="logo" data-height="67"  data-no-retina="">
+      <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="Home.html">HOME</a></li>
+        <li><a href="Lecturerlogin.html">LECTURER</a></li>
+        <li><a href="Studentlogin.html">STUDENT</a></li>
+        <li><a href="index3.html">RECORD</a></li>
+      </ul>
+    </nav>
+
+    <div class="container2">
+      <div class="card-section">
+        <div class="card">
+          <img src="img/apl.JPG" alt="All the details" />
+          <p>All the details, one tap</p>
+        </div>
+        <div class="card">
+          <img src="img/gate.jpg" alt="Preview trailers" />
+          <p>Preview with quick trailers</p>
+        </div>
+      </div>
+      <h2>
+        Welcome to FEDPOLEL<br>
+        It is my great pleasure to heartily welcome you to the project website of Adelakun Ifeoluwa Mathew,<br>
+        a student of Federal Polytechnic, Ile Oluji...
+      </h2>
+    </div>
+  </div>
+
+  <h2>THE FEDERAL POLYTECHNIC OF ILE-OLUJI</h2>
+  <h1>Class Attendance</h1>
+
+  <div class="container">
+    <div class="left-panel">
+      <div class="grid">
+        <img src="img/schoolofAgric.jpg" alt="School of Agric" />
+        <img src="img/bus.jpg" alt="Business School" />
+        <img src="img/eng.jpg" alt="Engineering" />
+        <img src="img/lib.jpg" alt="Library" />
+      </div>
+    </div>
+    <div class="right-panel">
+      <h1>QR Code Attendance<br>Made Easy<br>Anytime, Anywhere</h1>
+      <p>
+        Scan, track, and relax — attendance made simple.
+        Dive into seamless QR code check-ins and keep your school days hassle-free.
+      </p>
+      <div class="buttons">
+        <button class="explore">Explore</button>
+        <button class="preview">Preview</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="box1">
+    <marquee behavior="scroll" direction="left">
+      This project is done by ADELAKUN IFEOLUWA MATHEW FPI/CSC/23/F042
+      to help lecturers and students record attendance smoothly during lectures.
+    </marquee>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById("navLinks");
+      navLinks.classList.toggle("active");
+    }
+  </script>
+</body>
+</html>

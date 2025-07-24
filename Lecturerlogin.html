@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecturerlogin.html</title>
+</head>
+<body>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          background-image: radial-gradient( circle,rgb(243, 243, 251),rgb(19, 19, 17));
+        }
+    
+        .container {
+          padding: 2rem;
+          border-radius: 190px 50px 300px 100px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          width: 300px;
+          height: 300px;
+          box-shadow: 0 0 20px rgb(235, 200, 2),0 0 40px rgb(228, 194, 4);
+          animation: glow-border 1.5s infinite alternate;
+     
+        }
+          @keyframes glow-border
+         {
+         100%  {box-shadow: 0 0 10px;}
+    
+         50%{box-shadow:none;}
+         }
+    
+        .tabs {
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: 1rem;
+        }
+    
+        .tabs button {
+          background: none;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          padding: 0.5rem;
+        }
+    
+        .tabs button.active {
+          border-bottom: 2px solid #007bff;
+          font-weight: bold;
+        }
+    
+        form {
+          display: none;
+          flex-direction: column;
+        }
+    
+        form.active {
+          display: flex;
+        }
+    
+        input {
+          margin-bottom: 1rem;
+          padding: 0.5rem;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+        }
+    
+        .submit-btn {
+          background: #007bff;
+          color: white;
+          width: 100px;
+          padding: 0.5rem;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      </style>
+    </head>
+    <body>
+    
+<div class="container">
+<div class="tabs">
+<button class="tab-link active" onclick="switchTab('loginForm')">Login</button>
+ <button class="tab-link" onclick="switchTab('signupForm')">Sign Up</button>
+ </div>
+<form id="loginForm" class="active" onsubmit="login(event)">
+  <input type="text" placeholder="StaffID" name="StaffID" required />
+  <input type="password" placeholder="Password" name="password" required />
+  <input type="submit" class="submit-btn"/>
+</form>
+
+<form id="signupForm">
+  <input type="text" placeholder="FullName" name="fullName" required />
+  <input type="text" placeholder="StaffID" name="StaffID" required />
+  <input type="password" placeholder="Password" name="password" required />
+  <input type="submit" class="submit-btn"/>
+</form>
+
+<script>
+  function switchTab(formId) {
+    document.querySelectorAll("form").forEach(form => form.classList.remove("active"));
+    document.getElementById(formId).classList.add("active");
+
+    document.querySelectorAll(".tab-link").forEach(btn => btn.classList.remove("active"));
+    if (formId === "loginForm") {
+      document.querySelector(".tab-link:nth-child(1)").classList.add("active");
+    } else {
+      document.querySelector(".tab-link:nth-child(2)").classList.add("active");
+    }
+  }
+
+  document.getElementById("signupForm").addEventListener("submit", async function (e) {
+  e.preventDefault(); // prevent default form behavior
+
+  const fullName = this.fullName.value;
+  const StaffID = this.StaffID.value;
+  const password = this.password.value;
+
+  const response = await fetch("http://localhost:3000/api/lecturer/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+     body: JSON.stringify({ FullName: fullName, StaffID, Password: password })
+  });
+
+  const result = await response.json();
+  alert(result.message);
+
+  if (response.ok) {
+      // Redirect to Lecturer page
+      window.location.href = "Lecturersuccess.html";
+    }
+});
+// ✅ Handle Login
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+   const StaffID = this.StaffID.value;
+    const Password = this.password.value;
+
+    const response = await fetch("http://localhost:3000/api/lecturer/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ StaffID, Password })
+    });
+
+    const result = await response.json();
+    alert(result.message);
+
+    
+    if (response.ok) {
+      // Redirect to Lecturer page
+      window.location.href = "Lecturer.html";
+    }
+  });
+</script>
+
+
+</body>
+</html>

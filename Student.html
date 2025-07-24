@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Attendance & QR Scanner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-image: radial-gradient(circle, rgb(243, 243, 251), rgb(19, 19, 17));
+      font-family: Arial, sans-serif;
+      color: rgb(17, 16, 16);
+      padding-bottom: 100px;
+    }
+
+    nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: rgba(128, 128, 128, 0);
+      color: white;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      height: 50px;
+      border-radius: 100px;
+    }
+
+    .toggle-btn {
+      display: none;
+      font-size: 24px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      color: white;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 15px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s;
+    }
+
+    .nav-links a:hover {
+      background-color: #0066cc;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        background-color: #0040805b;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        padding: 10px 0;
+      }
+
+      .nav-links.active {
+                display: flex;
+      }
+
+      .toggle-btn {
+        display: block;
+      }
+    }
+
+    .bodywork, .container {
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0);
+      border-radius: 40px;
+      box-shadow: 0 0 20px rgb(235, 200, 2), 0 0 40px rgb(228, 194, 4);
+      animation: glow-border 1.5s infinite alternate;
+    }
+
+    @keyframes glow-border {
+      100%  {box-shadow: 0 0 10px;}
+      50% {box-shadow: none;}
+    }
+
+    .b1 {
+      margin: 10px 0;
+      font-size: 25px;
+      font-weight: bolder;
+    }
+
+    .b1 input, .b1 select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+
+    .b2 {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .b2 button {
+      padding: 10px 20px;
+      background-color: royalblue;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .placeholder {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 16px;
+      font-weight: bolder;
+      margin-top: 20px;
+    }
+
+    .placeholder input {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    #my-qr-reader {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1.5px solid #b2b2b2;
+      border-radius: 8px;
+      background-color: #ffffff04;
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+  <img class="logo-main scale-with-grid " src="https://fedpolel.edu.ng/wp-content/uploads/2021/05/logo-1.png" data-retina=""alt="Federal Polytechnic Ile-Oluji Logo"  class="logo" data-height="67"  data-no-retina="">
+    <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="Home.html">HOME</a></li>
+      <li><a href="Lecturerlogin.html">LECTURER</a></li>
+      <li><a href="Studentlogin.html">STUDENT</a></li>
+      <li><a href="index3.html">RECORD</a></li>
+    </ul>
+  </nav>
+
+  <h1 style="text-align:center;">Class Attendance</h1>
+
+  <div class="bodywork">
+    <h2 style="text-align:center;">Student Information</h2>
+    <p style="text-align:center;">Please fill this form correctly</p>
+
+    <div class="b1">
+      <label>Name</label>
+      <input type="text" id="Name" placeholder="First Name" required>
+    </div>
+
+    <div class="b1">
+      <label>Surname</label>
+      <input type="text" id="SurName" placeholder="Surname" required>
+    </div>
+
+    <div class="b1">
+      <label>Middle Name</label>
+      <input type="text" id="N1" placeholder="Middle Name">
+    </div>
+
+    <div class="b1">
+      <label>School</label>
+      <select id="School">
+        <option value="ENGINEERING">ENGINEERING</option>
+        <option value="INDUSTRIAL & APPLIED SCIENCES">INDUSTRIAL & APPLIED SCIENCES</option>
+        <option value="BUSINESS STUDIES AND MANAGEMENT">BUSINESS STUDIES AND MANAGEMENT</option>
+        <option value="AGRICULTURE">AGRICULTURE</option>
+        <option value="ENVIRONMENTAL DESIGN AND TECH">ENVIRONMENTAL DESIGN AND TECH</option>
+      </select>
+    </div>
+
+    <div class="b1">
+      <label>Department</label>
+      <select id="Department">
+        <option value="COMPUTER ENGINEERING">COMPUTER ENGINEERING</option>
+        <option value="ELECTRICAL ENGINEERING">ELECTRICAL ENGINEERING</option>
+        <option value="CIVIL ENGINEERING">CIVIL ENGINEERING</option>
+        <option value="COMPUTER SCIENCE">COMPUTER SCIENCE</option>
+        <option value="STATISTICS">STATISTICS</option>
+        <option value="ACCOUNTANCY">ACCOUNTANCY</option>
+        <option value="AGRICULTURAL TECH">AGRICULTURAL TECH</option>
+        <option value="ARCHITECTURAL TECH">ARCHITECTURAL TECH</option>
+      </select>
+    </div>
+
+    <div class="b1">
+      <label>Matric Number</label>
+      <input type="text" id="Matric" placeholder="FPI/XXX/YY/ZZZ" required>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Scan QR Codes</h1>
+    <div class="placeholder">
+      <input type="text" id="courseCode" placeholder="Course Code (e.g. CSC 201)">
+      <input type="text" id="courseTitle" placeholder="Course Title (e.g. Web Dev)">
+      <input type="text" id="lecturer" placeholder="Lecturer Name">
+    </div>
+    <div id="my-qr-reader"></div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const navLinks = document.getElementById("navLinks");
+      navLinks.classList.toggle("active");
+    }
+
+    function domReady(fn) {
+      if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(fn, 1000);
+      } else {
+        document.addEventListener("DOMContentLoaded", fn);
+      }
+    }
+
+    domReady(function () {
+      function onScanSuccess(decodeText, decodeResult) {
+        const name = document.getElementById("Name").value.trim();
+        const surname = document.getElementById("SurName").value.trim();
+        const middlename = document.getElementById("N1").value.trim();
+        const school = document.getElementById("School").value;
+        const department = document.getElementById("Department").value;
+        const matric = document.getElementById("Matric").value.trim();
+        const courseCode = document.getElementById("courseCode").value.trim();
+        const courseTitle = document.getElementById("courseTitle").value.trim();
+        const lecturer = document.getElementById("lecturer").value.trim();
+
+        if (!name || !surname || !school || !department || !matric || !courseCode || !courseTitle || !lecturer) {
+          alert("Please fill all form and course details before scanning.");
+          return;
+        }
+
+        let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
+        let timestamp = new Date().toLocaleString();
+        scans.push({
+          data: decodeText,
+          time: timestamp,
+          name,
+          surname,
+          middlename,
+          school,
+          department,
+          matric,
+          courseCode,
+          courseTitle,
+          lecturer
+        });
+        localStorage.setItem("qrScans", JSON.stringify(scans));
+        window.location.href = "index3.html";
+      }
+
+      let htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
+        fps: 10,
+        qrbox: 250
+      });
+      htmlscanner.render(onScanSuccess);
+    });
+  </script>
+</body>
+
+</html>
