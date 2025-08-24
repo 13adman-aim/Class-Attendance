@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -97,7 +98,6 @@
   <input type="password" placeholder="Password" name="password" required />
   <input type="submit" class="submit-btn"/>
 </form>
-
 <script>
   function switchTab(formId) {
     document.querySelectorAll("form").forEach(form => form.classList.remove("active"));
@@ -111,54 +111,75 @@
     }
   }
 
+  // ✅ Handle Signup
   document.getElementById("signupForm").addEventListener("submit", async function (e) {
-  e.preventDefault(); // prevent default form behavior
-
-  const fullName = this.fullName.value;
-  const StaffID = this.StaffID.value;
-  const password = this.password.value;
-
-  const response = await fetch("http://localhost:3000/api/lecturer/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-     body: JSON.stringify({ FullName: fullName, StaffID, Password: password })
-  });
-
-  const result = await response.json();
-  alert(result.message);
-
-  if (response.ok) {
-      // Redirect to Lecturer page
-      window.location.href = "Lecturersuccess.html";
-    }
-});
-// ✅ Handle Login
-  document.getElementById("loginForm").addEventListener("submit", async function (e) {
     e.preventDefault();
-   const StaffID = this.StaffID.value;
-    const Password = this.password.value;
 
-    const response = await fetch("http://localhost:3000/api/lecturer/login", {
+    const fullName = this.fullName.value;
+    const staffId = this.StaffID.value;
+    const password = this.password.value;
+
+    const response = await fetch("/.netlify/functions/signup", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ StaffID, Password })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, staffId, password })
     });
 
     const result = await response.json();
-    alert(result.message);
+    alert(result.message || (response.ok ? "Signup successful!" : "Signup failed"));
 
-    
     if (response.ok) {
-      // Redirect to Lecturer page
+      // Optionally fetch profile immediately
+      fetchProfile();
+      window.location.href = "Lecturersuccess.html";
+    }
+  });
+
+  // ✅ Handle Login
+  document.getElementById("loginForm").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const staffId = this.StaffID.value;
+    const password = this.password.value;
+
+    const response = await fetch("/.netlify/functions/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include", // ✅ send cookie
+      body: JSON.stringify({ staffId, password })
+    });
+
+    const result = await response.json();
+    alert(result.message || (response.ok ? "Login successful!" : "Login failed"));
+
+    if (response.ok) {
+      // ✅ Fetch profile to confirm login worked
+      await fetchProfile();
       window.location.href = "Lecturer.html";
     }
   });
+
+  // ✅ Fetch profile after login/signup
+  async function fetchProfile() {
+    try {
+      const res = await fetch("/.netlify/functions/getProfile", {
+        method: "GET",
+        credentials: "include"
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        console.log("Profile:", data);
+        localStorage.setItem("lecturerId", data.staffId);
+        localStorage.setItem("lecturerName", data.fullName);
+      } else {
+        console.warn("Profile error:", data.error);
+      }
+    } catch (err) {
+      console.error("Profile fetch failed:", err);
+    }
+  }
 </script>
-
-
+</div>
 </body>
-</html>
+</html> 
