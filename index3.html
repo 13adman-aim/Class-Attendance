@@ -14,7 +14,12 @@
     table {
       margin: 20px auto;
       border-collapse: collapse;
-      width: 90%;
+      width: 100%;  
+      min-width: 600px; 
+    }
+   .table-container {
+      width: 100%;
+      overflow-x: auto;
     }
     th, td {
       padding: 12px 20px;
@@ -129,7 +134,7 @@
   </ul>
 </nav>
 <h1>Attendance <br>Scanned QR Code Data</h1>
-<div id="printSection">
+<div id="printSection" class="table-container">
   <table id="qrTable">
     <thead>
       <tr>
@@ -218,4 +223,5 @@
 </script>
 </body>
 </html>
+
 
