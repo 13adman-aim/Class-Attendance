@@ -261,7 +261,7 @@
         }
 
         let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
-        let timestamp = new Date().toLocaleString();
+        let timestamp = new Date().toISOString();    
         scans.push({
           data: decodeText,
           time: timestamp,
@@ -289,3 +289,4 @@
 </body>
 
 </html>
+
