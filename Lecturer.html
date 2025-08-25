@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
 <head>
   <meta charset="UTF-8">
   <title>Generate Class QR Code</title>
@@ -85,6 +86,7 @@
 
     .form-container {
       max-width: 500px;
+      width: 90%; 
       margin: 40px auto;
       padding: 20px;
       background: rgba(255, 255, 255, 0);
@@ -137,7 +139,8 @@
       border-radius: 20px;
       text-align: center;
       box-shadow: 0 0 10px #aaa;
-      color: white;
+      color: rgb(0, 0, 0);
+      font-weight: bolder;
     }
 
     #idCard h3 {
@@ -160,6 +163,7 @@
       margin-top: 20px;
       display: flex;
       justify-content: center;
+      overflow: auto;
     }
 
     @media print {
