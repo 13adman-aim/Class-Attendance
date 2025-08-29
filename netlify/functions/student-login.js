@@ -21,24 +21,24 @@ export async function handler(event) {
   try {
     await connectDB();
 
-    const { matricNo, password } = JSON.parse(event.body);
+    const { matricNum, password } = JSON.parse(event.body);
 
-    if (!matricNo || !password) {
-      return { statusCode: 400, body: JSON.stringify({ message: "Matric No and password are required" }) };
+    if (!matricNum || !password) {
+      return { statusCode: 400, body: JSON.stringify({ message: "Matric Num and password are required" }) };
     }
 
-    const student = await Student.findOne({ matricNo });
+    const student = await Student.findOne({ matricNum });
     if (!student) {
-      return { statusCode: 400, body: JSON.stringify({ message: "Invalid Matric No or password" }) };
+      return { statusCode: 400, body: JSON.stringify({ message: "Invalid Matric Num or password" }) };
     }
 
     const isMatch = await bcrypt.compare(password, student.password);
     if (!isMatch) {
-      return { statusCode: 400, body: JSON.stringify({ message: "Invalid Matric No or password" }) };
+      return { statusCode: 400, body: JSON.stringify({ message: "Invalid Matric Num or password" }) };
     }
 
     const token = jwt.sign(
-      { sub: student._id, matricNo: student.matricNo },
+      { sub: student._id, matricNum: student.matricNum },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -50,7 +50,7 @@ export async function handler(event) {
       },
       body: JSON.stringify({
         message: "Login successful!",
-        student: { fullName: student.fullName, matricNo: student.matricNo }
+        student: { fullName: student.fullName, matricNum: student.matricNum }
       })
     };
   } catch (err) {
