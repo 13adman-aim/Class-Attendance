@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
-  matricNo: { type: String, required: true, unique: true }, // like staffId
+  matricNum: { type: String, required: true, unique: true }, // like staffId
   password: { type: String, required: true }
 });
 
