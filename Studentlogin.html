@@ -118,13 +118,13 @@
   const matricNum = this.matricNum.value;
   const password = this.password.value;
 
-  const response = await fetch("http://localhost:3000/api/signup", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ FullName: fullName, MatricNum: matricNum, Password: password })
-  });
+ // Signup
+const res = await fetch("/.netlify/functions/student-signup", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+});
+
 
   const result = await response.json();
   alert(result.message);
@@ -140,13 +140,13 @@
     const MatricNum = this.querySelector('[name="matricNum"]').value;
     const Password = this.querySelector('[name="password"]').value;
 
-    const response = await fetch("http://localhost:3000/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ MatricNum, Password })
-    });
+   // Login
+const res = await fetch("/.netlify/functions/student-login", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(data)
+});
+
 
     const result = await response.json();
     alert(result.message);
@@ -161,4 +161,5 @@
 
 
 </body>
+
 </html>
