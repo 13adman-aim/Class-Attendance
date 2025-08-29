@@ -20,27 +20,27 @@ export async function handler(event) {
   try {
     await connectDB();
 
-    const { fullName, matricNo, password } = JSON.parse(event.body);
+    const { fullName, matricNum, password } = JSON.parse(event.body);
 
-    if (!fullName || !matricNo || !password) {
+    if (!fullName || !matricNum || !password) {
       return { statusCode: 400, body: JSON.stringify({ message: "All fields are required" }) };
     }
 
-    const existing = await Student.findOne({ matricNo });
+    const existing = await Student.findOne({ matricNum });
     if (existing) {
-      return { statusCode: 400, body: JSON.stringify({ message: "Matric No already exists" }) };
+      return { statusCode: 400, body: JSON.stringify({ message: "Matric Num already exists" }) };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const student = new Student({ fullName, matricNo, password: hashedPassword });
+    const student = new Student({ fullName, matricNum, password: hashedPassword });
     await student.save();
 
     return {
       statusCode: 201,
       body: JSON.stringify({
         message: "Signup successful! You can now login.",
-        student: { fullName, matricNo }
+        student: { fullName, matricNum }
       })
     };
   } catch (err) {
