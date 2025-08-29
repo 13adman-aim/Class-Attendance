@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
-import Student from "../models/Student.js";
+import Student from "./models/Student.js";
 
 let conn = null;
 async function connectDB() {
