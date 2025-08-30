@@ -229,40 +229,45 @@
     <div id="my-qr-reader"></div>
   </div>
 
-  <script>
-    function toggleMenu() {
-      const navLinks = document.getElementById("navLinks");
-      navLinks.classList.toggle("active");
-    }
+ <script>
+  function toggleMenu() {
+    const navLinks = document.getElementById("navLinks");
+    navLinks.classList.toggle("active");
+  }
 
-    function domReady(fn) {
-      if (document.readyState === "complete" || document.readyState === "interactive") {
-        setTimeout(fn, 1000);
-      } else {
-        document.addEventListener("DOMContentLoaded", fn);
+  function domReady(fn) {
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      setTimeout(fn, 1000);
+    } else {
+      document.addEventListener("DOMContentLoaded", fn);
+    }
+  }
+
+  domReady(function () {
+    function onScanSuccess(decodeText, decodeResult) {
+      const name = document.getElementById("Name").value.trim();
+      const surname = document.getElementById("SurName").value.trim();
+      const middlename = document.getElementById("N1").value.trim();
+      const school = document.getElementById("School").value;
+      const department = document.getElementById("Department").value;
+      const matric = document.getElementById("Matric").value.trim();
+      const courseCode = document.getElementById("courseCode").value.trim();
+      const courseTitle = document.getElementById("courseTitle").value.trim();
+      const lecturer = document.getElementById("lecturer").value.trim();
+
+      if (!name || !surname || !school || !department || !matric || !courseCode || !courseTitle || !lecturer) {
+        alert("Please fill all form and course details before scanning.");
+        return;
       }
-    }
 
-    domReady(function () {
-      function onScanSuccess(decodeText, decodeResult) {
-        const name = document.getElementById("Name").value.trim();
-        const surname = document.getElementById("SurName").value.trim();
-        const middlename = document.getElementById("N1").value.trim();
-        const school = document.getElementById("School").value;
-        const department = document.getElementById("Department").value;
-        const matric = document.getElementById("Matric").value.trim();
-        const courseCode = document.getElementById("courseCode").value.trim();
-        const courseTitle = document.getElementById("courseTitle").value.trim();
-        const lecturer = document.getElementById("lecturer").value.trim();
+      // ✅ define timestamp first
+      let timestamp = new Date().toISOString();
 
-        if (!name || !surname || !school || !department || !matric || !courseCode || !courseTitle || !lecturer) {
-          alert("Please fill all form and course details before scanning.");
-          return;
-        }
-
-        let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
-        let timestamp = new Date().toISOString();    
-        scans.push({
+      // Save to MongoDB via Netlify function
+      fetch("/.netlify/functions/saveAttendance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           data: decodeText,
           time: timestamp,
           name,
@@ -274,19 +279,44 @@
           courseCode,
           courseTitle,
           lecturer
-        });
-        localStorage.setItem("qrScans", JSON.stringify(scans));
-        window.location.href = "index3.html";
-      }
+        })
+      })
+      .then(res => res.json())
+      .then(response => {
+        console.log("Saved to MongoDB:", response);
+      })
+      .catch(err => console.error("Error saving record:", err));
 
-      let htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
-        fps: 10,
-        qrbox: 250
+      // Save locally as before
+      let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
+      scans.push({
+        data: decodeText,
+        time: timestamp,
+        name,
+        surname,
+        middlename,
+        school,
+        department,
+        matric,
+        courseCode,
+        courseTitle,
+        lecturer
       });
-      htmlscanner.render(onScanSuccess);
+      localStorage.setItem("qrScans", JSON.stringify(scans));
+
+      // Redirect to record page
+      window.location.href = "index3.html";
+    }
+
+    let htmlscanner = new Html5QrcodeScanner("my-qr-reader", {
+      fps: 10,
+      qrbox: 250
     });
-  </script>
+    htmlscanner.render(onScanSuccess);
+  });
+</script>
 </body>
 
 </html>
+
 
