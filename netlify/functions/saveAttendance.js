@@ -1,9 +1,12 @@
- const { MongoClient, ObjectId } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
-const uri = process.env.MONGODB_URI; // Netlify env variable
+const uri = process.env.MONGO_URI; // ✅ match Netlify env key
 let client = null;
 
 async function connectDB() {
+  if (!uri) {
+    throw new Error("❌ Environment variable MONGO_URI is not defined in Netlify.");
+  }
   if (!client) {
     client = new MongoClient(uri);
     await client.connect();
@@ -58,6 +61,7 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: "Method Not Allowed" };
 
   } catch (err) {
+    console.error("❌ saveAttendance error:", err.message);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),
