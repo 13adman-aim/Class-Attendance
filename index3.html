@@ -156,11 +156,23 @@
 <button onclick="scanAgain()">Scan Again</button>
 <script>
   const tableBody = document.querySelector("#qrTable tbody");
-  let scans = JSON.parse(localStorage.getItem("qrScans")) || [];
+  let scans = []; // will be loaded from DB
+
+  // Fetch all scans from backend
+  async function fetchScans() {
+    try {
+      const res = await fetch("/.netlify/functions/save-attendants");
+      scans = await res.json();
+      renderTable();
+    } catch (err) {
+      console.error("Error fetching scans:", err);
+      tableBody.innerHTML = `<tr><td colspan="7">Error loading scans.</td></tr>`;
+    }
+  }
 
   function renderTable() {
     tableBody.innerHTML = "";
-    if (scans.length === 0) {
+    if (!scans || scans.length === 0) {
       tableBody.innerHTML = `<tr><td colspan="7">No scans yet.</td></tr>`;
     } else {
       scans.forEach((scan, index) => {
@@ -171,46 +183,52 @@
           <td>${scan.name}</td>
           <td>${scan.surname}</td>
           <td>${scan.matric}</td>
-          <td>${formatDate(scan.time)}</td>
-          <td><button class="delete-btn" onclick="deleteScan(${index})">Delete</button></td>
+          <td>${formatDate(scan.createdAt || scan.time)}</td>
+          <td><button class="delete-btn" onclick="deleteScan('${scan._id}')">Delete</button></td>
         `;
         tableBody.appendChild(row);
       });
     }
   }
 
- function formatDate(dateString) {
-  if (!dateString) return '';
-  
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) {
-    return dateString; // fallback
+  function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return dateString; // fallback
+    const options = { 
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    return date.toLocaleString(undefined, options);
   }
 
-  const options = { 
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit'
-  };
-
-  return date.toLocaleString(undefined, options);
-}
-  function clearScans() {
+  // Delete all scans from DB
+  async function clearScans() {
     if (confirm("Are you sure you want to clear all scans?")) {
-      localStorage.removeItem("qrScans");
-      scans = [];
-      renderTable();
+      for (const scan of scans) {
+        await fetch("/.netlify/functions/save-attendants", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: scan._id })
+        });
+      }
+      fetchScans();
     }
   }
 
-  function deleteScan(index) {
-    scans.splice(index, 1);
-    localStorage.setItem("qrScans", JSON.stringify(scans));
-    renderTable();
+  // Delete single scan
+  async function deleteScan(id) {
+    await fetch("/.netlify/functions/save-attendants", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id })
+    });
+    fetchScans();
   }
 
   function downloadPDF() {
@@ -233,10 +251,13 @@
     document.getElementById("navLinks").classList.toggle("active");
   }
 
-  renderTable();
+  // Load from DB on page load
+  fetchScans();
 </script>
+
 </body>
 </html>
+
 
 
 
