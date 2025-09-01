@@ -1,4 +1,4 @@
-const { MongoClient, ObjectId } = require("mongodb");
+ const { MongoClient, ObjectId } = require("mongodb");
 
 const uri = process.env.MONGODB_URI; // Netlify env variable
 let client = null;
